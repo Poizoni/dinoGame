@@ -16,6 +16,8 @@ import com.mygdx.dino.GameContactListener;
 import com.mygdx.dino.objects.Cactus;
 import com.mygdx.dino.objects.Dino;
 
+import java.util.Random;
+
 public class GameScreen extends ScreenAdapter {
     DinoGame dinoGame;
 
@@ -26,11 +28,14 @@ public class GameScreen extends ScreenAdapter {
     private GameContactListener contactListener;
     private Box2DDebugRenderer debugRenderer;
     private Vector2 floorPos1, floorPos2;
+    private Vector2 cloudPos;
     private OrthographicCamera camera;
+    private Random random;
     private World world;
 
     private TextureRegion gameoverRegion;
     private TextureRegion floor;
+    private TextureRegion cloud;
     private Array<Cactus> cacti;
     private Sound deathSound;
     private Cactus cactus;
@@ -47,9 +52,11 @@ public class GameScreen extends ScreenAdapter {
         contactListener = new GameContactListener(this);
         world.setContactListener(contactListener);
         debugRenderer = new Box2DDebugRenderer();
+        random = new Random();
 
         gameoverRegion = new TextureRegion(DinoGame.spriteSheet, 1293, 28, 382, 22);
         floor = new TextureRegion(DinoGame.spriteSheet, 0, 100, 2402, 28);
+        cloud = new TextureRegion(DinoGame.spriteSheet, 165, 0, 95, 30);
         deathSound = Gdx.audio.newSound(Gdx.files.internal("deathSound.ogg"));
         cactus = new Cactus(-100, this);
         dino = new Dino(0, 0, this);
@@ -61,6 +68,7 @@ public class GameScreen extends ScreenAdapter {
 
         floorPos1 = new Vector2(camera.position.x - camera.viewportWidth / 2, FLOOR_Y_OFFSET);
         floorPos2 = new Vector2((camera.position.x - camera.viewportWidth / 2) + floor.getRegionWidth(), FLOOR_Y_OFFSET);
+        cloudPos = new Vector2((camera.position.x - camera.viewportWidth / 2) + cloud.getRegionWidth(), 100);
 
         gameover = false;
     }
@@ -82,6 +90,7 @@ public class GameScreen extends ScreenAdapter {
 
         handleInput();
         updateFloor();
+        updateCloud();
 
         dino.update(delta);
         camera.position.x = dino.getPosition().x + 600;
@@ -105,12 +114,14 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         DinoGame.batch.begin();
+            DinoGame.batch.draw(cloud, cloudPos.x, cloudPos.y);
             DinoGame.batch.draw(dino.getDinoTexture(), dino.getPosition().x, dino.getPosition().y);
             for(Cactus cactus : cacti) {
                 DinoGame.batch.draw(cactus.getCactus(), cactus.getCactusPos().x, cactus.getCactusPos().y);
             }
             DinoGame.batch.draw(floor, floorPos1.x, floorPos1.y);
             DinoGame.batch.draw(floor, floorPos2.x, floorPos2.y);
+
             if(gameover) {
                 deathSound.play();
                 DinoGame.batch.draw(gameoverRegion, camera.position.x - (gameoverRegion.getRegionWidth() / 2), camera.position.y);
@@ -123,13 +134,28 @@ public class GameScreen extends ScreenAdapter {
         if(camera.position.x - (camera.viewportWidth / 2) > floorPos1.x + floor.getRegionWidth())
             floorPos1.add(floor.getRegionWidth() * 2, 0);
         if(camera.position.x - (camera.viewportWidth / 2) > floorPos2.x + floor.getRegionWidth())
-            floorPos2.add(floor.getRegionWidth() * 2, 0);
+            floorPos2.add(floor.getRegionWidth() / 2, 0);
     }
+    public void updateCloud() {
+        if(camera.position.x - (camera.viewportWidth / 2) > cloudPos.x + cloud.getRegionWidth())
+            cloudPos.add(camera.viewportWidth * randomCloud(), cloudPos.y * randomCloud());
+        if(cloudPos.y > camera.viewportHeight) {
+            cloudPos.y = camera.viewportHeight / 2;
+        }
+    }
+    public float randomCloud() {
+        return random.nextFloat(0.5f, 1.5f);
+    }
+
     @Override
     public void hide() {
 
     }
     public World getWorld() {
         return world;
+    }
+    public void dispose() {
+        deathSound.dispose();
+
     }
 }
