@@ -1,5 +1,7 @@
 package com.mygdx.dino.objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -16,6 +18,7 @@ public class Dino {
     private DinoAnimation dinoAnimation;
     private Vector2 position;
     private Vector2 velocity;
+    private Sound jumpSound;
     private Body body;
 
     private boolean animated;
@@ -26,6 +29,7 @@ public class Dino {
         dinoRegion = new TextureRegion(DinoGame.spriteSheet, 1677, 0, 89, 96);
         runningDinoRegion = new TextureRegion(DinoGame.spriteSheet, 1677, 0, 264, 96);
         dinoAnimation = new DinoAnimation(runningDinoRegion, 3, 0.1f);
+        jumpSound = Gdx.audio.newSound(Gdx.files.internal("jumpSound.ogg"));
         velocity = new Vector2(0, 0);
         position = new Vector2(x, y);
         colliding = false;
@@ -63,6 +67,7 @@ public class Dino {
     public void jump() {
         if(position.y == 0)
             velocity.y = 600;
+        jumpSound.play();
     }
 
     public TextureRegion getDinoTexture() {
@@ -73,5 +78,8 @@ public class Dino {
     }
     public Vector2 getPosition() {
         return position;
+    }
+    public void dispose() {
+        jumpSound.dispose();
     }
 }

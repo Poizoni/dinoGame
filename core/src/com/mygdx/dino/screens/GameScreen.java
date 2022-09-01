@@ -3,6 +3,7 @@ package com.mygdx.dino.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -31,6 +32,7 @@ public class GameScreen extends ScreenAdapter {
     private TextureRegion gameoverRegion;
     private TextureRegion floor;
     private Array<Cactus> cacti;
+    private Sound deathSound;
     private Cactus cactus;
     public Dino dino;
 
@@ -48,6 +50,7 @@ public class GameScreen extends ScreenAdapter {
 
         gameoverRegion = new TextureRegion(DinoGame.spriteSheet, 1293, 28, 382, 22);
         floor = new TextureRegion(DinoGame.spriteSheet, 0, 100, 2402, 28);
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("deathSound.ogg"));
         cactus = new Cactus(-100, this);
         dino = new Dino(0, 0, this);
 
@@ -102,16 +105,16 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         DinoGame.batch.begin();
-
-        DinoGame.batch.draw(dino.getDinoTexture(), dino.getPosition().x, dino.getPosition().y);
-        for(Cactus cactus : cacti) {
-            DinoGame.batch.draw(cactus.getCactus(), cactus.getCactusPos().x, cactus.getCactusPos().y);
-        }
-        DinoGame.batch.draw(floor, floorPos1.x, floorPos1.y);
-        DinoGame.batch.draw(floor, floorPos2.x, floorPos2.y);
-        if(gameover)
-            DinoGame.batch.draw(gameoverRegion, camera.position.x - (gameoverRegion.getRegionWidth() / 2) , camera.position.y);
-
+            DinoGame.batch.draw(dino.getDinoTexture(), dino.getPosition().x, dino.getPosition().y);
+            for(Cactus cactus : cacti) {
+                DinoGame.batch.draw(cactus.getCactus(), cactus.getCactusPos().x, cactus.getCactusPos().y);
+            }
+            DinoGame.batch.draw(floor, floorPos1.x, floorPos1.y);
+            DinoGame.batch.draw(floor, floorPos2.x, floorPos2.y);
+            if(gameover) {
+                deathSound.play();
+                DinoGame.batch.draw(gameoverRegion, camera.position.x - (gameoverRegion.getRegionWidth() / 2), camera.position.y);
+            }
         DinoGame.batch.end();
 
         // debugRenderer.render(world, camera.combined);
