@@ -5,13 +5,14 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.mygdx.dino.ContactType;
+import com.mygdx.dino.helper.ContactType;
 import com.mygdx.dino.DinoGame;
+import com.mygdx.dino.helper.BodyHelper;
 import com.mygdx.dino.screens.GameScreen;
 
 public class Dino {
     private static final int GRAVITY = -20;
-    private static final int MOVEMENT = 600;
+    private static int movementSpeed = 600;
 
     private TextureRegion runningDinoRegion;
     private TextureRegion dinoRegion;
@@ -55,6 +56,7 @@ public class Dino {
         if(colliding) {
             animated = false;
             stop();
+            resetSpeed();
             dinoRegion = new TextureRegion(DinoGame.spriteSheet, 2029, 0, 89, 96);
         }
         if(position.y > 0) {
@@ -63,7 +65,7 @@ public class Dino {
         }
         velocity.scl(delta);
         if(!colliding)
-            position.add(MOVEMENT * delta, velocity.y);
+            position.add(movementSpeed * delta, velocity.y);
 
         // wait until first jump ends before moving
         if(position.x != 0 && timerIterations == 0) {
@@ -74,7 +76,6 @@ public class Dino {
                 timerIterations++;
             }
         }
-
         if(position.y < 0)
             position.y = 0;
         velocity.scl(1/delta);
@@ -87,10 +88,17 @@ public class Dino {
         if(position.y == 0) {
             velocity.y = 600;
             jumpSound.play();
+            incSpeed();
         }
     }
     public void stop() {
         velocity.y = 0;
+    }
+    public void incSpeed() {
+        movementSpeed *= 1.01f;
+    }
+    public void resetSpeed() {
+        movementSpeed = 600;
     }
 
     public TextureRegion getDinoTexture() {

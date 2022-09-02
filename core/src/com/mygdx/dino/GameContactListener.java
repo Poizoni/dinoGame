@@ -1,6 +1,7 @@
 package com.mygdx.dino;
 
 import com.badlogic.gdx.physics.box2d.*;
+import com.mygdx.dino.helper.ContactType;
 import com.mygdx.dino.screens.GameScreen;
 
 public class GameContactListener implements ContactListener {

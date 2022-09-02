@@ -4,8 +4,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.dino.ContactType;
+import com.mygdx.dino.helper.ContactType;
 import com.mygdx.dino.DinoGame;
+import com.mygdx.dino.helper.BodyHelper;
 import com.mygdx.dino.screens.GameScreen;
 
 import java.util.Random;

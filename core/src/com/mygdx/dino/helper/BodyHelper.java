@@ -1,7 +1,6 @@
-package com.mygdx.dino.objects;
+package com.mygdx.dino.helper;
 
 import com.badlogic.gdx.physics.box2d.*;
-import com.mygdx.dino.ContactType;
 
 public class BodyHelper {
     public static Body createBody(float x, float y, float width, float height, float density, World world, ContactType type) {
