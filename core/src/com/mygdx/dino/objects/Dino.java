@@ -16,13 +16,15 @@ public class Dino {
 
     private TextureRegion runningDinoRegion;
     private TextureRegion dinoRegion;
-    private DinoAnimation dinoAnimation;
+    private MakeAnimation dinoAnimation;
     private Vector2 position;
     private Vector2 velocity;
     private Sound jumpSound;
+    private Sound deathSound;
     private Body body;
 
     private int timerIterations;
+    private int deathSoundCount;
     private float timeSeconds;
     private boolean animated;
     private float period;
@@ -32,8 +34,9 @@ public class Dino {
     public Dino(int x, int y, GameScreen gameScreen) {
         dinoRegion = new TextureRegion(DinoGame.spriteSheet, 1677, 0, 89, 96);
         runningDinoRegion = new TextureRegion(DinoGame.spriteSheet, 1853, 0, 177, 96);
-        dinoAnimation = new DinoAnimation(runningDinoRegion, 2, 0.1f);
+        dinoAnimation = new MakeAnimation(runningDinoRegion, 2, 0.1f);
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("jumpSound.ogg"));
+        deathSound = Gdx.audio.newSound(Gdx.files.internal("deathSound.ogg"));
         velocity = new Vector2(0, 0);
         position = new Vector2(x, y);
         colliding = false;
@@ -55,6 +58,9 @@ public class Dino {
             animated = true;
         if(colliding) {
             animated = false;
+            if(deathSoundCount == 0)
+                deathSound.play();
+            deathSoundCount++;
             stop();
             resetSpeed();
             dinoRegion = new TextureRegion(DinoGame.spriteSheet, 2029, 0, 89, 96);
@@ -112,5 +118,6 @@ public class Dino {
     }
     public void dispose() {
         jumpSound.dispose();
+        deathSound.dispose();
     }
 }

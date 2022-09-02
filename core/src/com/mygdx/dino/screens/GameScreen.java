@@ -2,6 +2,7 @@ package com.mygdx.dino.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
@@ -15,6 +16,7 @@ import com.mygdx.dino.DinoGame;
 import com.mygdx.dino.GameContactListener;
 import com.mygdx.dino.objects.Cactus;
 import com.mygdx.dino.objects.Dino;
+import com.mygdx.dino.objects.MakeAnimation;
 
 import java.util.Random;
 
@@ -33,14 +35,19 @@ public class GameScreen extends ScreenAdapter {
     private Random random;
     private World world;
 
+    private TextureRegion restartAnimationRegion;
+    private MakeAnimation restartAnimation;
     private TextureRegion gameoverRegion;
+    private TextureRegion restartButton;
+    private TextureRegion restart;
     private TextureRegion floor;
     private TextureRegion cloud;
     private Array<Cactus> cacti;
-    private Sound deathSound;
     private Cactus cactus;
     public Dino dino;
 
+    private int animationCount;
+    private int restartCount;
     public boolean gameover;
 
     GameScreen(DinoGame dinoGame) {
@@ -54,10 +61,13 @@ public class GameScreen extends ScreenAdapter {
         debugRenderer = new Box2DDebugRenderer();
         random = new Random();
 
+        restartAnimationRegion = new TextureRegion(DinoGame.spriteSheet, 0, 129, 578, 65);
         gameoverRegion = new TextureRegion(DinoGame.spriteSheet, 1293, 28, 382, 22);
+        restartButton = new TextureRegion(DinoGame.spriteSheet, 505, 129, 73, 65);
+        restartAnimation = new MakeAnimation(restartAnimationRegion, 8, 2f);
+        restart = new TextureRegion(DinoGame.spriteSheet, 9, 133, 56, 56);
         floor = new TextureRegion(DinoGame.spriteSheet, 0, 100, 2402, 28);
         cloud = new TextureRegion(DinoGame.spriteSheet, 165, 0, 95, 30);
-        deathSound = Gdx.audio.newSound(Gdx.files.internal("deathSound.ogg"));
         cactus = new Cactus(-100, this);
         dino = new Dino(0, 0, this);
 
@@ -70,6 +80,8 @@ public class GameScreen extends ScreenAdapter {
         floorPos2 = new Vector2((camera.position.x - camera.viewportWidth / 2) + floor.getRegionWidth(), FLOOR_Y_OFFSET);
         cloudPos = new Vector2((camera.position.x - camera.viewportWidth / 2) + cloud.getRegionWidth(), 100);
 
+        animationCount = 0;
+        restartCount = 0;
         gameover = false;
     }
 
@@ -84,7 +96,10 @@ public class GameScreen extends ScreenAdapter {
 
     public void update(float delta) {
         if(gameover) {
-            dinoGame.setScreen(new EndScreen(dinoGame));
+            if(Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                dispose();
+                dinoGame.setScreen(new GameScreen(dinoGame));
+            }
         }
         world.step(1 / 60f, 6, 2);
 
@@ -93,6 +108,7 @@ public class GameScreen extends ScreenAdapter {
         updateCloud();
 
         dino.update(delta);
+        restartAnimation.update(delta);
         camera.position.x = dino.getPosition().x + 600;
 
         for(int i = 0 ; i < cacti.size ; i++) {
@@ -121,10 +137,19 @@ public class GameScreen extends ScreenAdapter {
             }
             DinoGame.batch.draw(floor, floorPos1.x, floorPos1.y);
             DinoGame.batch.draw(floor, floorPos2.x, floorPos2.y);
-
             if(gameover) {
-                deathSound.play();
-                DinoGame.batch.draw(gameoverRegion, camera.position.x - (gameoverRegion.getRegionWidth() / 2), camera.position.y);
+                DinoGame.batch.draw(gameoverRegion, camera.position.x - (gameoverRegion.getRegionWidth() / 2), camera.position.y + 20);
+                if(restartAnimation.frameEnd()) {
+                    restartCount++;
+                }
+                if(restartCount == 0) {
+                    if(animationCount == 0)
+                        restartAnimation.restart();
+                    animationCount++;
+                    DinoGame.batch.draw(restartAnimation.getFrame(), camera.position.x - (restart.getRegionWidth() / 2), camera.position.y / 2);
+                }
+                if(restartCount > 0)
+                    DinoGame.batch.draw(restartButton, camera.position.x - (restart.getRegionWidth() / 2) + 1, camera.position.y / 2);
             }
         DinoGame.batch.end();
 
@@ -156,7 +181,6 @@ public class GameScreen extends ScreenAdapter {
     }
     public void dispose() {
         world.dispose();
-        deathSound.dispose();
         dino.dispose();
     }
 }
