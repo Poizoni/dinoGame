@@ -5,8 +5,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class MakeAnimation {
     private Array<TextureRegion> frames;
-    private float maxFrameTime;
     private float currentFrameTime;
+    private float maxFrameTime;
     private int frameCount;
     private int frame;
 

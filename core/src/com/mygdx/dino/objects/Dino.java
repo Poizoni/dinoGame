@@ -1,14 +1,14 @@
 package com.mygdx.dino.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.mygdx.dino.helper.ContactType;
-import com.mygdx.dino.DinoGame;
-import com.mygdx.dino.helper.BodyHelper;
 import com.mygdx.dino.screens.GameScreen;
+import com.mygdx.dino.helper.BodyHelper;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.audio.Sound;
+import com.mygdx.dino.DinoGame;
+import com.badlogic.gdx.Gdx;
 
 public class Dino {
     private static final int GRAVITY = -20;
@@ -61,8 +61,8 @@ public class Dino {
             if(deathSoundCount == 0)
                 deathSound.play();
             deathSoundCount++;
-            stop();
             resetSpeed();
+            stop();
             dinoRegion = new TextureRegion(DinoGame.spriteSheet, 2029, 0, 89, 96);
         }
         if(position.y > 0) {
@@ -90,6 +90,7 @@ public class Dino {
                             position.y + dinoRegion.getRegionHeight() / 2,
                             0);
     }
+
     public void jump() {
         if(position.y == 0) {
             velocity.y = 600;
@@ -100,6 +101,7 @@ public class Dino {
     public void stop() {
         velocity.y = 0;
     }
+
     public void incSpeed() {
         movementSpeed *= 1.01f;
     }
@@ -116,6 +118,7 @@ public class Dino {
     public Vector2 getPosition() {
         return position;
     }
+
     public void dispose() {
         jumpSound.dispose();
         deathSound.dispose();
