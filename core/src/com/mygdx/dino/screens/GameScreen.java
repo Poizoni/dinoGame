@@ -155,7 +155,8 @@ public class GameScreen extends ScreenAdapter {
         return world;
     }
     public void dispose() {
+        world.dispose();
         deathSound.dispose();
-
+        dino.dispose();
     }
 }
