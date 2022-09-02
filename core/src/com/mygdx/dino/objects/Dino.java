@@ -21,7 +21,10 @@ public class Dino {
     private Sound jumpSound;
     private Body body;
 
+    private int timerIterations;
+    private float timeSeconds;
     private boolean animated;
+    private float period;
 
     public boolean colliding;
 
@@ -38,6 +41,10 @@ public class Dino {
                                         dinoRegion.getRegionWidth() / 2,
                                         (dinoRegion.getRegionHeight() / 2) - 5,
                                         0, gameScreen.getWorld(), ContactType.PLAYER);
+        timerIterations = 0;
+        timeSeconds = 0f;
+        period = 1.2f;
+
         animated = true;
     }
 
@@ -47,15 +54,27 @@ public class Dino {
             animated = true;
         if(colliding) {
             animated = false;
-            velocity.y = 0;
+            stop();
             dinoRegion = new TextureRegion(DinoGame.spriteSheet, 2029, 0, 89, 96);
         }
-        if(position.y > 0)
+        if(position.y > 0) {
             animated = false;
             velocity.add(0, GRAVITY);
+        }
         velocity.scl(delta);
         if(!colliding)
             position.add(MOVEMENT * delta, velocity.y);
+
+        // wait until first jump ends before moving
+        if(position.x != 0 && timerIterations == 0) {
+            position.x = 0;
+            timeSeconds += Gdx.graphics.getDeltaTime();
+            if(timeSeconds > period && timerIterations == 0) {
+                timeSeconds -= period;
+                timerIterations++;
+            }
+        }
+
         if(position.y < 0)
             position.y = 0;
         velocity.scl(1/delta);
@@ -65,9 +84,13 @@ public class Dino {
                             0);
     }
     public void jump() {
-        if(position.y == 0)
+        if(position.y == 0) {
             velocity.y = 600;
-        jumpSound.play();
+            jumpSound.play();
+        }
+    }
+    public void stop() {
+        velocity.y = 0;
     }
 
     public TextureRegion getDinoTexture() {
