@@ -134,7 +134,7 @@ public class GameScreen extends ScreenAdapter {
         if(camera.position.x - (camera.viewportWidth / 2) > floorPos1.x + floor.getRegionWidth())
             floorPos1.add(floor.getRegionWidth() * 2, 0);
         if(camera.position.x - (camera.viewportWidth / 2) > floorPos2.x + floor.getRegionWidth())
-            floorPos2.add(floor.getRegionWidth() / 2, 0);
+            floorPos2.add(floor.getRegionWidth() * 2, 0);
     }
     public void updateCloud() {
         if(camera.position.x - (camera.viewportWidth / 2) > cloudPos.x + cloud.getRegionWidth())
