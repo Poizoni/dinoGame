@@ -27,8 +27,8 @@ public class Dino {
 
     public Dino(int x, int y, GameScreen gameScreen) {
         dinoRegion = new TextureRegion(DinoGame.spriteSheet, 1677, 0, 89, 96);
-        runningDinoRegion = new TextureRegion(DinoGame.spriteSheet, 1677, 0, 264, 96);
-        dinoAnimation = new DinoAnimation(runningDinoRegion, 3, 0.1f);
+        runningDinoRegion = new TextureRegion(DinoGame.spriteSheet, 1853, 0, 177, 96);
+        dinoAnimation = new DinoAnimation(runningDinoRegion, 2, 0.1f);
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("jumpSound.ogg"));
         velocity = new Vector2(0, 0);
         position = new Vector2(x, y);

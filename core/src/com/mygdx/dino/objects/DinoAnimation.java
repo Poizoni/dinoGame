@@ -17,6 +17,7 @@ public class DinoAnimation {
             frames.add(new TextureRegion(region, i * frameWidth, 0, frameWidth, region.getRegionHeight()));
         }
         this.frameCount = frameCount;
+        maxFrameTime = cycleTime / frameCount;
         frame = 0;
     }
 
