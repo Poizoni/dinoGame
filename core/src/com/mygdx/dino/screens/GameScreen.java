@@ -39,16 +39,25 @@ public class GameScreen extends ScreenAdapter {
     private MakeAnimation restartAnimation;
     private TextureRegion gameoverRegion;
     private TextureRegion restartButton;
+    private TextureRegion[] scoreRegion;
     private TextureRegion restart;
     private TextureRegion floor;
     private TextureRegion cloud;
     private Array<Cactus> cacti;
     private Cactus cactus;
     public Dino dino;
+    private String finalScoreFormatted;
 
     private int animationCount;
     private int restartCount;
     public boolean gameover;
+    private int score = 0;
+    private int finalScore = 0;
+    private boolean startedScore = false;
+
+    private int timerIterations;
+    private float timeSeconds;
+    private float period;
 
     GameScreen(DinoGame dinoGame) {
         this.dinoGame = dinoGame;
@@ -64,6 +73,17 @@ public class GameScreen extends ScreenAdapter {
         restartAnimationRegion = new TextureRegion(DinoGame.spriteSheet, 0, 129, 578, 65);
         gameoverRegion = new TextureRegion(DinoGame.spriteSheet, 1293, 28, 382, 22);
         restartButton = new TextureRegion(DinoGame.spriteSheet, 505, 129, 73, 65);
+        scoreRegion = new TextureRegion[10];
+        scoreRegion[0] = new TextureRegion(DinoGame.spriteSheet, 1292, 0, 20, 23);
+        scoreRegion[1] = new TextureRegion(DinoGame.spriteSheet, 1312, 0, 20, 23);
+        scoreRegion[2] = new TextureRegion(DinoGame.spriteSheet, 1332, 0, 20, 23);
+        scoreRegion[3] = new TextureRegion(DinoGame.spriteSheet, 1352, 0, 20, 23);
+        scoreRegion[4] = new TextureRegion(DinoGame.spriteSheet, 1372, 0, 20, 23);
+        scoreRegion[5] = new TextureRegion(DinoGame.spriteSheet, 1392, 0, 20, 23);
+        scoreRegion[6] = new TextureRegion(DinoGame.spriteSheet, 1412, 0, 20, 23);
+        scoreRegion[7] = new TextureRegion(DinoGame.spriteSheet, 1432, 0, 20, 23);
+        scoreRegion[8] = new TextureRegion(DinoGame.spriteSheet, 1452, 0, 20, 23);
+        scoreRegion[9] = new TextureRegion(DinoGame.spriteSheet, 1472, 0, 20, 23);
         restartAnimation = new MakeAnimation(restartAnimationRegion, 8, 2f);
         restart = new TextureRegion(DinoGame.spriteSheet, 9, 133, 56, 56);
         floor = new TextureRegion(DinoGame.spriteSheet, 0, 100, 2402, 28);
@@ -83,6 +103,9 @@ public class GameScreen extends ScreenAdapter {
         animationCount = 0;
         restartCount = 0;
         gameover = false;
+        timerIterations = 0;
+        timeSeconds = 0f;
+        period = 1.2f;
     }
 
     protected void handleInput() {
@@ -99,6 +122,14 @@ public class GameScreen extends ScreenAdapter {
             if(Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 dispose();
                 dinoGame.setScreen(new GameScreen(dinoGame));
+            }
+        }
+        if(dino.getPosition().x == 0 && timerIterations == 0) {
+            timeSeconds += Gdx.graphics.getDeltaTime();
+            if(timeSeconds > period && timerIterations == 0) {
+                timeSeconds -= period;
+                timerIterations++;
+                startScore();
             }
         }
         world.step(1 / 60f, 6, 2);
@@ -151,6 +182,7 @@ public class GameScreen extends ScreenAdapter {
                 if(restartCount > 0)
                     DinoGame.batch.draw(restartButton, camera.position.x - (restart.getRegionWidth() / 2) + 1, camera.position.y / 2);
             }
+        drawNumbers();
         DinoGame.batch.end();
 
         // debugRenderer.render(world, camera.combined);
@@ -170,6 +202,34 @@ public class GameScreen extends ScreenAdapter {
     }
     public float randomCloud() {
         return random.nextFloat(0.5f, 1.5f);
+    }
+    public void startScore() {
+        startedScore = true;
+    }
+    private void drawNumbers() {
+        if(!gameover) {
+            if(startedScore)
+                score++;
+            String formatScore = String.format("%07d", score);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(formatScore.charAt(0))], camera.position.x + 400, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(formatScore.charAt(1))], camera.position.x + 420, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(formatScore.charAt(2))], camera.position.x + 440, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(formatScore.charAt(3))], camera.position.x + 460, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(formatScore.charAt(4))], camera.position.x + 480, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(formatScore.charAt(5))], camera.position.x + 500, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(formatScore.charAt(6))], camera.position.x + 520, camera.position.y + 100);
+        }
+        if(gameover) {
+            finalScore = score;
+            finalScoreFormatted = String.format("%07d", finalScore);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(finalScoreFormatted.charAt(0))], camera.position.x + 400, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(finalScoreFormatted.charAt(1))], camera.position.x + 420, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(finalScoreFormatted.charAt(2))], camera.position.x + 440, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(finalScoreFormatted.charAt(3))], camera.position.x + 460, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(finalScoreFormatted.charAt(4))], camera.position.x + 480, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(finalScoreFormatted.charAt(5))], camera.position.x + 500, camera.position.y + 100);
+            DinoGame.batch.draw(scoreRegion[Character.getNumericValue(finalScoreFormatted.charAt(6))], camera.position.x + 520, camera.position.y + 100);
+        }
     }
 
     @Override
