@@ -151,7 +151,7 @@ public class GameScreen extends ScreenAdapter {
     }
     public void updateCloud() {
         if(camera.position.x - (camera.viewportWidth / 2) > cloudPos.x + cloud.getRegionWidth())
-            cloudPos.add(camera.viewportWidth * randomCloud(), cloudPos.y * randomCloud());
+            cloudPos.add(camera.viewportWidth * (randomCloud()*1.4f), cloudPos.y * randomCloud());
         if(cloudPos.y > camera.viewportHeight) {
             cloudPos.y = camera.viewportHeight / 2;
         }
@@ -201,7 +201,7 @@ public class GameScreen extends ScreenAdapter {
         }
     }
     public float randomCloud() {
-        return random.nextFloat(0.5f, 1.5f);
+        return random.nextFloat()+0.5f;
     }
 
     private void drawNumbers() {
